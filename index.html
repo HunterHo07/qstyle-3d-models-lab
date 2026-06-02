@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive WebGL catalog with 200 procedural Q-style characters, dragons, weapons, land tiles, and props." />
+    <title>Q-Style 3D Models Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div>
+          <p>Hunter Ho 3D Models Demo</p>
+          <h1>Q-Style 3D Models Lab</h1>
+          <span>Interactive WebGL catalog with 200 procedural Q-style characters, dragons, weapons, land tiles, and props.</span>
+        </div>
+        <div class="stats">
+          <strong id="count">200</strong>
+          <span>procedural browser models</span>
+        </div>
+      </section>
+      <section class="stage">
+        <canvas id="scene"></canvas>
+        <aside>
+          <button data-filter="all">All</button>
+          <button data-filter="character">Characters</button>
+          <button data-filter="dragon">Dragons</button>
+          <button data-filter="weapon">Weapons</button>
+          <button data-filter="land">Land</button>
+          <button data-filter="prop">Props</button>
+          <p id="caption">Drag to rotate. Use filter buttons to review different model families.</p>
+        </aside>
+      </section>
+      <section class="catalog" id="catalog"></section>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
