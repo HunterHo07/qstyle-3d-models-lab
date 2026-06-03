@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Interactive WebGL catalog with 200 procedural Q-style characters, dragons, weapons, land tiles, and props." />
+    <meta name="description" content="Real GLB asset catalog with cute characters, animated mascots, vehicles, and props for browser 3D demos." />
     <title>Q-Style 3D Models Lab</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -13,27 +13,44 @@
         <div>
           <p>Hunter Ho 3D Models Demo</p>
           <h1>Q-Style 3D Models Lab</h1>
-          <span>Interactive WebGL catalog with 200 procedural Q-style characters, dragons, weapons, land tiles, and props.</span>
+          <span>Real GLB assets: cute characters, animated mascots, vehicles, props, and browser-ready downloads.</span>
         </div>
         <div class="stats">
-          <strong id="count">200</strong>
-          <span>procedural browser models</span>
+          <strong id="count">0</strong>
+          <span>local GLB files</span>
         </div>
       </section>
+
       <section class="stage">
-        <canvas id="scene"></canvas>
-        <aside>
+        <div class="asset-viewer">
+          <canvas id="scene" aria-label="Interactive 3D model viewer"></canvas>
+          <div class="viewer-copy">
+            <p id="viewer-status">Loading model manifest...</p>
+            <h2 id="model-name">Real GLB asset</h2>
+            <span id="model-meta">Drag to rotate. Animations auto-play when included.</span>
+            <p id="model-notes">Pick an asset below to inspect the actual model file.</p>
+            <a class="download-link" id="download-link" href="#" download>Download GLB</a>
+          </div>
+        </div>
+        <aside class="filters" aria-label="Model family filters">
           <button data-filter="all">All</button>
           <button data-filter="character">Characters</button>
-          <button data-filter="dragon">Dragons</button>
-          <button data-filter="weapon">Weapons</button>
-          <button data-filter="land">Land</button>
+          <button data-filter="cute">Cute</button>
+          <button data-filter="animated">Animated</button>
           <button data-filter="prop">Props</button>
-          <p id="caption">Drag to rotate. Use filter buttons to review different model families.</p>
+          <button data-filter="vehicle">Vehicles</button>
         </aside>
       </section>
-      <section class="catalog" id="catalog"></section>
+
+      <section class="catalog" id="catalog" aria-label="Downloadable GLB asset catalog"></section>
     </main>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+        }
+      }
+    </script>
     <script type="module" src="./main.js"></script>
   </body>
 </html>

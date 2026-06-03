@@ -1,0 +1,266 @@
+{
+  "generatedAt": "2026-06-03T19:14:15.506Z",
+  "format": "glb",
+  "assets": [
+    {
+      "id": "spark-runner-mascot",
+      "name": "Spark Runner Mascot",
+      "category": "character",
+      "animated": true,
+      "tags": [
+        "runner",
+        "mascot"
+      ],
+      "file": "models/spark-runner-mascot.glb",
+      "downloadUrl": "models/spark-runner-mascot.glb",
+      "notes": "Cute hero character with an embedded bounce animation for game or learning demos.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "mint-helper-bot",
+      "name": "Mint Helper Bot",
+      "category": "character",
+      "animated": true,
+      "tags": [
+        "robot",
+        "assistant"
+      ],
+      "file": "models/mint-helper-bot.glb",
+      "downloadUrl": "models/mint-helper-bot.glb",
+      "notes": "Small assistant robot with a simple hover animation and reusable named mesh nodes.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "pocket-dragon",
+      "name": "Pocket Dragon",
+      "category": "cute",
+      "animated": true,
+      "tags": [
+        "dragon",
+        "companion"
+      ],
+      "file": "models/pocket-dragon.glb",
+      "downloadUrl": "models/pocket-dragon.glb",
+      "notes": "Compact cute dragon silhouette with wings, horns, tail, and idle motion.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "star-mage-kid",
+      "name": "Star Mage Kid",
+      "category": "animated",
+      "animated": true,
+      "tags": [
+        "character",
+        "magic"
+      ],
+      "file": "models/star-mage-kid.glb",
+      "downloadUrl": "models/star-mage-kid.glb",
+      "notes": "Animated learning-game character with a star wand and friendly Q-style proportions.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "cloud-rabbit",
+      "name": "Cloud Rabbit",
+      "category": "cute",
+      "animated": false,
+      "tags": [
+        "pet",
+        "soft"
+      ],
+      "file": "models/cloud-rabbit.glb",
+      "downloadUrl": "models/cloud-rabbit.glb",
+      "notes": "Cute rounded pet asset for assistant UI, onboarding, or classroom game scenes.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "neon-skate-bot",
+      "name": "Neon Skate Bot",
+      "category": "animated",
+      "animated": true,
+      "tags": [
+        "robot",
+        "vehicle"
+      ],
+      "file": "models/neon-skate-bot.glb",
+      "downloadUrl": "models/neon-skate-bot.glb",
+      "notes": "Animated robot-rider style asset suitable for game lobby and arcade scenes.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "hover-scooter",
+      "name": "Hover Scooter",
+      "category": "vehicle",
+      "animated": false,
+      "tags": [
+        "transport",
+        "sci-fi"
+      ],
+      "file": "models/hover-scooter.glb",
+      "downloadUrl": "models/hover-scooter.glb",
+      "notes": "Small hover vehicle prop for platform, hub, or marketplace 3D scenes.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "cloud-delivery-cart",
+      "name": "Cloud Delivery Cart",
+      "category": "vehicle",
+      "animated": false,
+      "tags": [
+        "cart",
+        "delivery"
+      ],
+      "file": "models/cloud-delivery-cart.glb",
+      "downloadUrl": "models/cloud-delivery-cart.glb",
+      "notes": "Cute delivery cart for item collection, economy, and tycoon scenes.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "rocket-booster-prop",
+      "name": "Rocket Booster Prop",
+      "category": "prop",
+      "animated": false,
+      "tags": [
+        "rocket",
+        "launch"
+      ],
+      "file": "models/rocket-booster-prop.glb",
+      "downloadUrl": "models/rocket-booster-prop.glb",
+      "notes": "Reusable launch prop for startup, game reward, or achievement scenes.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "treasure-data-crate",
+      "name": "Treasure Data Crate",
+      "category": "prop",
+      "animated": false,
+      "tags": [
+        "reward",
+        "data"
+      ],
+      "file": "models/treasure-data-crate.glb",
+      "downloadUrl": "models/treasure-data-crate.glb",
+      "notes": "Game-ready reward crate with glowing data orb detail.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "mini-command-desk",
+      "name": "Mini Command Desk",
+      "category": "prop",
+      "animated": false,
+      "tags": [
+        "dashboard",
+        "desk"
+      ],
+      "file": "models/mini-command-desk.glb",
+      "downloadUrl": "models/mini-command-desk.glb",
+      "notes": "Tiny control desk prop for operations, classroom, and software dashboard scenes.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "tiny-factory-friend",
+      "name": "Tiny Factory Friend",
+      "category": "cute",
+      "animated": false,
+      "tags": [
+        "industrial",
+        "mascot"
+      ],
+      "file": "models/tiny-factory-friend.glb",
+      "downloadUrl": "models/tiny-factory-friend.glb",
+      "notes": "Friendly industrial mascot for factory, energy, and automation scenes.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    },
+    {
+      "id": "dance-console-bot",
+      "name": "Dance Console Bot",
+      "category": "animated",
+      "animated": true,
+      "tags": [
+        "robot",
+        "console"
+      ],
+      "file": "models/dance-console-bot.glb",
+      "downloadUrl": "models/dance-console-bot.glb",
+      "notes": "Animated console robot with embedded loop for demo booths and game UI.",
+      "engineCompatibility": [
+        "three.js",
+        "babylon.js",
+        "model-viewer"
+      ],
+      "scale": "meters-ish, centered around origin",
+      "status": "portfolio-ready"
+    }
+  ]
+}
