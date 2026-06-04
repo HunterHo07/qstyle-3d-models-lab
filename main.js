@@ -11,10 +11,6 @@ const modelNotes = document.getElementById("model-notes");
 const downloadLink = document.getElementById("download-link");
 const statusText = document.getElementById("viewer-status");
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 1000);
 camera.position.set(4.8, 3.2, 8.4);
@@ -44,6 +40,7 @@ const floor = new THREE.Mesh(
 floor.position.y = -1.22;
 scene.add(floor);
 
+let renderer = null;
 const loader = new GLTFLoader();
 const clock = new THREE.Clock();
 const mixers = [];
@@ -56,6 +53,19 @@ let targetRotationY = 0;
 
 function setStatus(text) {
   statusText.textContent = text;
+}
+
+function createRenderer() {
+  try {
+    const nextRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    nextRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    nextRenderer.outputColorSpace = THREE.SRGBColorSpace;
+    return nextRenderer;
+  } catch (error) {
+    canvas.classList.add("is-unavailable");
+    setStatus("WebGL unavailable in this browser. The real GLB catalog and downloads still work.");
+    return null;
+  }
 }
 
 function formatTags(asset) {
@@ -96,6 +106,12 @@ function updateModelCopy(asset) {
 async function loadModel(asset) {
   clearModel();
   updateModelCopy(asset);
+
+  if (!renderer) {
+    setStatus("WebGL unavailable in this browser. Pick and download any real GLB asset below.");
+    return;
+  }
+
   setStatus("Loading real GLB asset...");
 
   loader.load(
@@ -184,6 +200,10 @@ canvas.addEventListener("pointermove", (event) => {
 });
 
 function resize() {
+  if (!renderer) {
+    return;
+  }
+
   const rect = canvas.getBoundingClientRect();
   renderer.setSize(rect.width, rect.height, false);
   camera.aspect = rect.width / rect.height;
@@ -191,6 +211,10 @@ function resize() {
 }
 
 function animate() {
+  if (!renderer) {
+    return;
+  }
+
   resize();
   const delta = clock.getDelta();
   mixers.forEach((mixer) => mixer.update(delta));
@@ -203,6 +227,7 @@ function animate() {
 }
 
 async function init() {
+  renderer = createRenderer();
   filters[0].classList.add("is-active");
   const response = await fetch("models/manifest.json");
   const manifest = await response.json();
@@ -211,7 +236,10 @@ async function init() {
   if (assets[0]) {
     loadModel(assets[0]);
   }
-  requestAnimationFrame(animate);
+
+  if (renderer) {
+    requestAnimationFrame(animate);
+  }
 }
 
 init().catch(() => {

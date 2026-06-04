@@ -124,6 +124,14 @@ canvas {
     linear-gradient(180deg, #07111e, #06101a);
 }
 
+canvas.is-unavailable {
+  display: grid;
+  background:
+    linear-gradient(135deg, rgba(255, 215, 138, 0.12), rgba(117, 244, 255, 0.12)),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 18px),
+    linear-gradient(180deg, #07111e, #06101a);
+}
+
 .viewer-copy {
   display: flex;
   flex-direction: column;

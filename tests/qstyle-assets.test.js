@@ -48,7 +48,9 @@ for (const asset of manifest.assets) {
 assert.ok(html.includes("Real GLB assets") && html.includes("Download GLB"), "UI should clearly present real downloadable GLB assets");
 assert.ok(js.includes("GLTFLoader") && js.includes("AnimationMixer"), "Viewer should load real GLB files and play embedded animations");
 assert.ok(js.includes("models/manifest.json") && js.includes("downloadUrl"), "Viewer should render from the local model manifest with download links");
+assert.ok(js.includes("function createRenderer()") && js.includes("catch (error)") && js.includes("is-unavailable"), "Viewer should guard WebGL renderer creation so the catalog is not empty when WebGL is unavailable");
+assert.ok(js.includes("WebGL unavailable") && js.includes("downloads still work"), "Viewer fallback should explain that real GLB downloads still work without WebGL");
 assert.ok(!js.includes("for (let i = 0; i < 200") && !html.includes("procedural browser models"), "Assets 3 should not keep the old fake 200 procedural model catalog");
-assert.ok(css.includes(".asset-viewer") && css.includes(".download-link"), "Styles should support a real model viewer and GLB download cards");
+assert.ok(css.includes(".asset-viewer") && css.includes(".download-link") && css.includes("canvas.is-unavailable"), "Styles should support a real model viewer, WebGL fallback, and GLB download cards");
 
 console.log("Q-style GLB asset checks passed.");
