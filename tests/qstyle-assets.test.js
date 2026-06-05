@@ -53,6 +53,8 @@ assert.ok(js.includes("camera.lookAt"), "Viewer camera should be aimed at the ch
 assert.ok(js.includes("loadAllModels") && js.includes("Promise.allSettled"), "Viewer should load every GLB into the stage instead of rendering only one selected model");
 assert.ok(js.includes("modelSlots") && js.includes("arrangeModelSlot"), "Viewer should arrange all real GLB models together in one visible 3D stage");
 assert.ok(js.includes("qstyle-verify") && js.includes("captureCanvasProbe"), "Viewer should expose a deterministic verification mode for proving the WebGL stage rendered models");
+assert.ok(js.includes("const startY = 0") && js.includes("probeSampleRegion"), "Verification probe should sample the lower rendered stage area instead of only the empty center of the canvas");
+assert.ok(js.includes("preserveDrawingBuffer: verifyMode"), "Verification mode should preserve the WebGL drawing buffer so pixel checks are reliable without slowing normal visitors");
 assert.ok(html.includes("13 real GLB models render together"), "UI should state that all models are visible in the shared 3D stage");
 assert.ok(js.includes("models/manifest.json") && js.includes("downloadUrl"), "Viewer should render from the local model manifest with download links");
 assert.ok(js.includes("function createRenderer()") && js.includes("catch (error)") && js.includes("is-unavailable"), "Viewer should guard WebGL renderer creation so the catalog is not empty when WebGL is unavailable");

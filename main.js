@@ -63,7 +63,12 @@ function setStatus(text) {
 
 function createRenderer() {
   try {
-    const nextRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    const nextRenderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      preserveDrawingBuffer: verifyMode
+    });
     nextRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     nextRenderer.outputColorSpace = THREE.SRGBColorSpace;
     return nextRenderer;
@@ -302,10 +307,10 @@ function captureCanvasProbe() {
   }
 
   const gl = renderer.getContext();
-  const sampleWidth = Math.min(gl.drawingBufferWidth, 360);
-  const sampleHeight = Math.min(gl.drawingBufferHeight, 220);
+  const sampleWidth = Math.min(gl.drawingBufferWidth, 720);
+  const sampleHeight = Math.min(gl.drawingBufferHeight, 380);
   const startX = Math.max(0, Math.floor((gl.drawingBufferWidth - sampleWidth) / 2));
-  const startY = Math.max(0, Math.floor((gl.drawingBufferHeight - sampleHeight) / 2));
+  const startY = 0;
   const pixels = new Uint8Array(sampleWidth * sampleHeight * 4);
   gl.readPixels(startX, startY, sampleWidth, sampleHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 
@@ -333,6 +338,7 @@ function captureCanvasProbe() {
     animatedMixers: mixers.length,
     canvasWidth: gl.drawingBufferWidth,
     canvasHeight: gl.drawingBufferHeight,
+    probeSampleRegion: `${startX},${startY},${sampleWidth},${sampleHeight}`,
     brightPixels,
     alphaPixels,
     colorBuckets: colorBuckets.size,
