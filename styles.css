@@ -120,8 +120,12 @@ canvas {
   min-height: 420px;
   border-radius: 20px;
   background:
+    radial-gradient(circle at 48% 46%, rgba(255, 215, 138, 0.16), transparent 12%),
     radial-gradient(circle at 50% 55%, rgba(117, 244, 255, 0.16), transparent 34%),
+    linear-gradient(rgba(117, 244, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(117, 244, 255, 0.08) 1px, transparent 1px),
     linear-gradient(180deg, #07111e, #06101a);
+  background-size: auto, auto, 34px 34px, 34px 34px, auto;
 }
 
 canvas.is-unavailable {
@@ -215,6 +219,15 @@ button:focus-visible {
   flex-direction: column;
   gap: 12px;
   padding: 16px;
+  transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.asset-card.is-active {
+  border-color: rgba(255, 215, 138, 0.72);
+  background:
+    linear-gradient(145deg, rgba(20, 42, 63, 0.98), rgba(10, 19, 31, 0.86)),
+    radial-gradient(circle at 15% 0%, rgba(255, 215, 138, 0.2), transparent 32%);
+  transform: translateY(-3px);
 }
 
 .asset-preview {
@@ -222,6 +235,10 @@ button:focus-visible {
   min-height: 104px;
   border-radius: 18px;
   text-align: left;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(255, 215, 138, 0.28), transparent 24%),
+    radial-gradient(circle at 84% 70%, rgba(117, 244, 255, 0.18), transparent 26%),
+    rgba(255, 255, 255, 0.06);
 }
 
 .asset-preview span,

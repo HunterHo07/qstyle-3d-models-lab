@@ -46,7 +46,14 @@ for (const asset of manifest.assets) {
 }
 
 assert.ok(html.includes("Real GLB assets") && html.includes("Download GLB"), "UI should clearly present real downloadable GLB assets");
+assert.ok(html.includes("Character-first Q-Style GLB Lab"), "UI should lead with a character/Q-style GLB demo, not a generic model catalog");
+assert.ok(html.includes("13 real GLB models render together"), "UI should tell users the demo renders the full model set together");
 assert.ok(js.includes("GLTFLoader") && js.includes("AnimationMixer"), "Viewer should load real GLB files and play embedded animations");
+assert.ok(js.includes("camera.lookAt"), "Viewer camera should be aimed at the character model so loaded GLBs are visible");
+assert.ok(js.includes("loadAllModels") && js.includes("Promise.allSettled"), "Viewer should load every GLB into the stage instead of rendering only one selected model");
+assert.ok(js.includes("modelSlots") && js.includes("arrangeModelSlot"), "Viewer should arrange all real GLB models together in one visible 3D stage");
+assert.ok(js.includes("qstyle-verify") && js.includes("captureCanvasProbe"), "Viewer should expose a deterministic verification mode for proving the WebGL stage rendered models");
+assert.ok(html.includes("13 real GLB models render together"), "UI should state that all models are visible in the shared 3D stage");
 assert.ok(js.includes("models/manifest.json") && js.includes("downloadUrl"), "Viewer should render from the local model manifest with download links");
 assert.ok(js.includes("function createRenderer()") && js.includes("catch (error)") && js.includes("is-unavailable"), "Viewer should guard WebGL renderer creation so the catalog is not empty when WebGL is unavailable");
 assert.ok(js.includes("WebGL unavailable") && js.includes("downloads still work"), "Viewer fallback should explain that real GLB downloads still work without WebGL");

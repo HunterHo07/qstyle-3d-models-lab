@@ -10,13 +10,16 @@ const modelMeta = document.getElementById("model-meta");
 const modelNotes = document.getElementById("model-notes");
 const downloadLink = document.getElementById("download-link");
 const statusText = document.getElementById("viewer-status");
+const verifyMode = new URLSearchParams(window.location.search).has("qstyle-verify");
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 1000);
-camera.position.set(4.8, 3.2, 8.4);
+const cameraTarget = new THREE.Vector3(0, 0.35, 0);
+camera.position.set(0, 6.8, 13.5);
+camera.lookAt(cameraTarget);
 
-const modelRoot = new THREE.Group();
-scene.add(modelRoot);
+const modelSlots = new THREE.Group();
+scene.add(modelSlots);
 scene.add(new THREE.AmbientLight(0xffffff, 0.86));
 
 const key = new THREE.DirectionalLight(0x9ff7ff, 2.1);
@@ -28,7 +31,7 @@ rim.position.set(-5, 4, -4);
 scene.add(rim);
 
 const floor = new THREE.Mesh(
-  new THREE.CylinderGeometry(2.8, 3.1, 0.12, 48),
+  new THREE.CylinderGeometry(8.2, 8.6, 0.12, 80),
   new THREE.MeshStandardMaterial({
     color: 0x0d2235,
     roughness: 0.7,
@@ -46,10 +49,13 @@ const clock = new THREE.Clock();
 const mixers = [];
 let assets = [];
 let activeFilter = "all";
-let currentModel = null;
 let drag = false;
 let lastX = 0;
 let targetRotationY = 0;
+let activeAssetId = null;
+let loadedCount = 0;
+const loadedSlots = new Map();
+const scaleScratch = new THREE.Vector3(1, 1, 1);
 
 function setStatus(text) {
   statusText.textContent = text;
@@ -77,7 +83,7 @@ function formatTags(asset) {
   return tags.join(" / ");
 }
 
-function frameModel(object) {
+function frameModel(object, desiredSize = 1.18) {
   const box = new THREE.Box3().setFromObject(object);
   const size = new THREE.Vector3();
   const center = new THREE.Vector3();
@@ -86,13 +92,14 @@ function frameModel(object) {
   object.position.sub(center);
 
   const maxSize = Math.max(size.x, size.y, size.z) || 1;
-  object.scale.setScalar(3.8 / maxSize);
+  object.scale.setScalar(desiredSize / maxSize);
 }
 
-function clearModel() {
+function clearStage() {
   mixers.length = 0;
-  modelRoot.clear();
-  currentModel = null;
+  loadedSlots.clear();
+  loadedCount = 0;
+  modelSlots.clear();
 }
 
 function updateModelCopy(asset) {
@@ -103,44 +110,100 @@ function updateModelCopy(asset) {
   downloadLink.download = asset.file.split("/").pop();
 }
 
-async function loadModel(asset) {
-  clearModel();
+function selectAsset(asset) {
+  activeAssetId = asset.id;
   updateModelCopy(asset);
+  updateActiveCatalogCard();
+  updateSceneFocus();
 
   if (!renderer) {
     setStatus("WebGL unavailable in this browser. Pick and download any real GLB asset below.");
     return;
   }
 
-  setStatus("Loading real GLB asset...");
+  if (loadedCount) {
+    setStatus(`${loadedCount} real GLB models render together. Selected: ${asset.name}.`);
+  }
+}
 
-  loader.load(
-    asset.file,
-    (gltf) => {
-      currentModel = gltf.scene;
-      currentModel.traverse((node) => {
-        if (node.isMesh) {
-          node.castShadow = false;
-          node.receiveShadow = false;
+function arrangeModelSlot(slot, index, total) {
+  const columns = 4;
+  const rows = Math.ceil(total / columns);
+  const row = Math.floor(index / columns);
+  const column = index % columns;
+  const itemsInRow = row === rows - 1 ? total - row * columns : columns;
+  const rowCenter = (itemsInRow - 1) / 2;
+  const x = (column - rowCenter) * 3.35;
+  const z = (row - (rows - 1) / 2) * 2.45;
+  slot.position.set(x, -0.38, z);
+  slot.userData.homeY = slot.position.y;
+}
+
+function loadModelSlot(asset, index) {
+  return new Promise((resolve, reject) => {
+    loader.load(
+      asset.file,
+      (gltf) => {
+        const slot = new THREE.Group();
+        slot.name = asset.id;
+        slot.userData = {
+          assetId: asset.id,
+          spinSpeed: asset.animated ? 0.007 : 0.0035,
+          targetScale: 1
+        };
+
+        const model = gltf.scene;
+        model.traverse((node) => {
+          if (node.isMesh && node.material) {
+            node.material.side = THREE.DoubleSide;
+          }
+        });
+        model.traverse((node) => {
+          if (node.isMesh) {
+            node.castShadow = false;
+            node.receiveShadow = false;
+          }
+        });
+        frameModel(model, asset.category === "prop" ? 1.02 : 1.2);
+        slot.add(model);
+        arrangeModelSlot(slot, index, assets.length);
+        modelSlots.add(slot);
+        loadedSlots.set(asset.id, slot);
+
+        if (gltf.animations && gltf.animations.length) {
+          const mixer = new THREE.AnimationMixer(model);
+          gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
+          mixers.push(mixer);
         }
-      });
-      frameModel(currentModel);
-      modelRoot.add(currentModel);
 
-      if (gltf.animations && gltf.animations.length) {
-        const mixer = new THREE.AnimationMixer(currentModel);
-        gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
-        mixers.push(mixer);
-        setStatus("Animation playing from embedded GLB clip.");
-      } else {
-        setStatus("Static GLB loaded. Drag to rotate.");
-      }
-    },
-    undefined,
-    () => {
-      setStatus("This model failed to load. Try another asset.");
+        resolve(slot);
+      },
+      undefined,
+      reject
+    );
+  });
+}
+
+async function loadAllModels() {
+  if (!renderer) {
+    return;
+  }
+
+  clearStage();
+  setStatus(`Loading ${assets.length} real GLB models into one stage...`);
+  const results = await Promise.allSettled(assets.map((asset, index) => loadModelSlot(asset, index)));
+  loadedCount = results.filter((result) => result.status === "fulfilled").length;
+  if (loadedCount) {
+    updateSceneFocus();
+    const selected = assets.find((asset) => asset.id === activeAssetId);
+    setStatus(`${loadedCount} real GLB models render together${selected ? `. Selected: ${selected.name}.` : "."}`);
+    if (verifyMode) {
+      renderFrame();
+      window.setTimeout(captureCanvasProbe, 120);
     }
-  );
+  } else {
+    setStatus("GLB files failed to render. Downloads still work below.");
+  }
 }
 
 function renderCatalog() {
@@ -150,7 +213,7 @@ function renderCatalog() {
 
   shown.forEach((asset, index) => {
     const article = document.createElement("article");
-    article.className = "asset-card";
+    article.className = `asset-card${asset.id === activeAssetId ? " is-active" : ""}`;
     article.innerHTML = `
       <button class="asset-preview" type="button" data-asset-id="${asset.id}">
         <span>${String(index + 1).padStart(2, "0")}</span>
@@ -167,10 +230,32 @@ function renderCatalog() {
     button.addEventListener("click", () => {
       const asset = assets.find((item) => item.id === button.dataset.assetId);
       if (asset) {
-        loadModel(asset);
+        selectAsset(asset);
       }
     });
   });
+}
+
+function updateActiveCatalogCard() {
+  catalog.querySelectorAll(".asset-card").forEach((card) => {
+    const button = card.querySelector("[data-asset-id]");
+    card.classList.toggle("is-active", button && button.dataset.assetId === activeAssetId);
+  });
+}
+
+function updateSceneFocus() {
+  loadedSlots.forEach((slot, assetId) => {
+    slot.userData.targetScale = assetId === activeAssetId ? 1.28 : 1;
+  });
+}
+
+function pickInitialAsset() {
+  return (
+    assets.find((asset) => asset.category === "character" && asset.animated) ||
+    assets.find((asset) => asset.tags && asset.tags.includes("character")) ||
+    assets.find((asset) => asset.category === "cute") ||
+    assets[0]
+  );
 }
 
 filters.forEach((button) => {
@@ -208,6 +293,77 @@ function resize() {
   renderer.setSize(rect.width, rect.height, false);
   camera.aspect = rect.width / rect.height;
   camera.updateProjectionMatrix();
+  camera.lookAt(cameraTarget);
+}
+
+function captureCanvasProbe() {
+  if (!renderer) {
+    return null;
+  }
+
+  const gl = renderer.getContext();
+  const sampleWidth = Math.min(gl.drawingBufferWidth, 360);
+  const sampleHeight = Math.min(gl.drawingBufferHeight, 220);
+  const startX = Math.max(0, Math.floor((gl.drawingBufferWidth - sampleWidth) / 2));
+  const startY = Math.max(0, Math.floor((gl.drawingBufferHeight - sampleHeight) / 2));
+  const pixels = new Uint8Array(sampleWidth * sampleHeight * 4);
+  gl.readPixels(startX, startY, sampleWidth, sampleHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+
+  let brightPixels = 0;
+  let alphaPixels = 0;
+  const colorBuckets = new Set();
+  for (let index = 0; index < pixels.length; index += 16) {
+    const red = pixels[index];
+    const green = pixels[index + 1];
+    const blue = pixels[index + 2];
+    const alpha = pixels[index + 3];
+    if (alpha > 0) {
+      alphaPixels += 1;
+    }
+    if (red + green + blue > 110) {
+      brightPixels += 1;
+    }
+    colorBuckets.add(`${red >> 4}-${green >> 4}-${blue >> 4}-${alpha >> 6}`);
+  }
+
+  const probe = {
+    expectedModels: assets.length,
+    loadedModels: loadedCount,
+    visibleSlots: loadedSlots.size,
+    animatedMixers: mixers.length,
+    canvasWidth: gl.drawingBufferWidth,
+    canvasHeight: gl.drawingBufferHeight,
+    brightPixels,
+    alphaPixels,
+    colorBuckets: colorBuckets.size,
+    status: statusText.textContent
+  };
+
+  window.__qstyleProbe = probe;
+  document.documentElement.dataset.qstyleLoadedModels = String(probe.loadedModels);
+  document.documentElement.dataset.qstyleVisibleSlots = String(probe.visibleSlots);
+  document.documentElement.dataset.qstyleAnimatedMixers = String(probe.animatedMixers);
+  document.documentElement.dataset.qstyleColorBuckets = String(probe.colorBuckets);
+  document.documentElement.dataset.qstyleBrightPixels = String(probe.brightPixels);
+  return probe;
+}
+
+function renderFrame() {
+  resize();
+  const delta = clock.getDelta();
+  mixers.forEach((mixer) => mixer.update(delta));
+  modelSlots.rotation.y += (targetRotationY - modelSlots.rotation.y) * 0.06;
+  loadedSlots.forEach((slot) => {
+    slot.rotation.y += slot.userData.spinSpeed;
+    const targetScale = slot.userData.targetScale || 1;
+    scaleScratch.set(targetScale, targetScale, targetScale);
+    slot.scale.lerp(scaleScratch, 0.08);
+    slot.position.y += ((slot.userData.homeY || 0) + (targetScale > 1 ? 0.16 : 0) - slot.position.y) * 0.08;
+  });
+  if (!drag) {
+    targetRotationY += 0.0009;
+  }
+  renderer.render(scene, camera);
 }
 
 function animate() {
@@ -215,14 +371,10 @@ function animate() {
     return;
   }
 
-  resize();
-  const delta = clock.getDelta();
-  mixers.forEach((mixer) => mixer.update(delta));
-  modelRoot.rotation.y += (targetRotationY - modelRoot.rotation.y) * 0.08;
-  if (!drag) {
-    targetRotationY += 0.003;
+  renderFrame();
+  if (verifyMode && window.__qstyleProbe && window.__qstyleProbe.loadedModels === assets.length) {
+    return;
   }
-  renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
 
@@ -233,9 +385,11 @@ async function init() {
   const manifest = await response.json();
   assets = manifest.assets || [];
   renderCatalog();
-  if (assets[0]) {
-    loadModel(assets[0]);
+  const initialAsset = pickInitialAsset();
+  if (initialAsset) {
+    selectAsset(initialAsset);
   }
+  loadAllModels();
 
   if (renderer) {
     requestAnimationFrame(animate);
